@@ -15,7 +15,7 @@ from utils.plots import plot_one_box
 from utils.torch_utils import select_device, load_classifier, time_synchronized, TracedModel
 
 
-def detect(source, weights, view_img, save_txt, imgsz, trace, save_img=True):
+def detect(source, weights, view_img, save_txt, imgsz, trace, device, model, save_img=True):
     # source, weights, view_img, save_txt, imgsz, trace = opt.source, opt.weights, opt.view_img, opt.save_txt, opt.img_size, not opt.no_trace
     # save_img = not opt.nosave and not source.endswith('.txt')  # save inference images
     webcam = source.isnumeric() or source.endswith('.txt') or source.lower().startswith(
@@ -27,11 +27,11 @@ def detect(source, weights, view_img, save_txt, imgsz, trace, save_img=True):
 
     # Initialize
     set_logging()
-    device = select_device('')
+    # device = select_device('')
     half = False #device.type != 'cpu'  # half precision only supported on CUDA
 
     # Load model
-    model = attempt_load(weights, map_location=device)  # load FP32 model
+    # model = attempt_load(weights, map_location=device)  # load FP32 model
     stride = int(model.stride.max())  # model stride
     imgsz = check_img_size(imgsz, s=stride)  # check img_size
 
@@ -130,8 +130,8 @@ def detect(source, weights, view_img, save_txt, imgsz, trace, save_img=True):
 
             # Print time (inference + NMS)
             ###print(f'{s}Done. ({(1E3 * (t2 - t1)):.1f}ms) Inference, ({(1E3 * (t3 - t2)):.1f}ms) NMS')
-            print(f"--->Detections per class: {n} and \n"
-                  f"s string: {s}")
+            # print(f"--->Detections per class: {n} and \n"
+            #       f"s string: {s}")
             """
             Üstteki kodu denemek için ben ekledim
             """
