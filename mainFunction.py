@@ -4,17 +4,26 @@ from utils.torch_utils import select_device
 
 import time
 """
+nosave için save_img'yi False yapmak yeterli.
+
 myDetecFunc'ta bir çok değişiklik var.
 conf threshold ve iou thresholdları sabit tuttum. değiştirebilir. orj'ine detect.py dan bak
 augment default false
-
-nosave için save_img'yi False yapmak yeterli.
-
 
 117. satırdaki text dosyasına yazdırılabilir.
 s += f"{n} {names[int(c)]}, "
 n number, c class name
 """
+
+""" TODO:
+source değişkeni fotoğrafların koyulduğu klasör olacak,
+while loopta beklenecek, buraya yeni klasör eklendiği zaman (ya da interrupt geldiği zaman)
+detect fonk. çalışacak, detect dosyalarını şu anlık 
+"C:\Users\gorke\Desktop\YOLO\yolov7\runs\hub" klasörüne kaydediliyor.
+bu yol detect fonk. içinden değiştirilebilir.
+
+"""
+
 
 # t = time.process_time()
 
