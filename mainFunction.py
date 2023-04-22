@@ -13,16 +13,16 @@ augment default false
 117. satırdaki text dosyasına yazdırılabilir.
 s += f"{n} {names[int(c)]}, "
 n number, c class name
-"""
-
-""" TODO:
+######################################
+TODO:
 source değişkeni fotoğrafların koyulduğu klasör olacak,
 while loopta beklenecek, buraya yeni klasör eklendiği zaman (ya da interrupt geldiği zaman)
 detect fonk. çalışacak, detect dosyalarını şu anlık 
-"C:\Users\gorke\Desktop\YOLO\yolov7\runs\hub" klasörüne kaydediliyor.
+"C:\\Users\\gorke\\Desktop\\YOLO\\yolov7\\runs\\hub" klasörüne kaydediliyor.
 bu yol detect fonk. içinden değiştirilebilir.
 
 """
+
 
 
 # t = time.process_time()
