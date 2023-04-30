@@ -136,9 +136,6 @@ def detect(source, weights, view_img, save_txt, imgsz, trace, device, model, sav
             Üstteki kodu denemek için ben ekledim
             """
 
-
-
-
             # Stream results
             if view_img:
                 cv2.imshow(str(p), im0)
@@ -169,6 +166,7 @@ def detect(source, weights, view_img, save_txt, imgsz, trace, device, model, sav
         #print(f"Results saved to {save_dir}{s}")
 
     print(f'Done. ({time.time() - t0:.3f}s)')
+    return(save_path)
 
 
 if __name__ == '__main__':

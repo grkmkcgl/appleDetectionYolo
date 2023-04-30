@@ -17,6 +17,10 @@ serverAddress = ("192.168.0.30", 1234)
 sock.connect(serverAddress)
 bufferLen = 65535
 
+# while True:
+#     server_input = sock.recv(128)
+#     print(server_input)
+
 with open("Red_Apple.jpg", "rb") as image:
     f = image.read()
     b = bytearray(f)
