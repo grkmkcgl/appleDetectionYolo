@@ -66,9 +66,8 @@ def sendFile(packet, path):
 
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# serverAddress = ("192.168.0.30", 1234)  # yerel ağdaki laptopun server adresi, port sabit
-serverAddress = ("172.26.195.51", 1234)
-sock.connect(serverAddress)
+serverAddress = ("192.168.0.30", 1234)  # yerel ağdaki laptopun server adresi, port sabit
+# serverAddress = ("172.26.195.51", 1234)
 bufferLen = 65535
 
 ###########################################################################################################
@@ -87,23 +86,26 @@ model = attempt_load(weights, map_location=device)  # load FP32 model
 model_elapsed_time = time.process_time() - model_load_time
 print("loading model took", model_elapsed_time, "seconds")
 
+sock.connect(serverAddress)
+
+camera = cv2.VideoCapture(0, cv2.CAP_ANY)
+camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+
 file_counter = 0
-camera_path = fr'C:\Users\gorke\Desktop\QT\bitirmeProjesiArayuz\images\saved_img{file_counter}.jpg'
+camera_path = fr'C:\Users\gorke\Desktop\QT\bitirmeProjesiArayuz\saved_img{file_counter}.jpg'
 while True:
     server_input = sock.recv(128)
     if server_input == b'bringMeNew':
         print("Detecting new image...")
-        camera_time = time.process_time()
-        webcam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-        check, frame = webcam.read()
-        cv2.resize(frame, (640,480))
-        detect_elapsed_time = time.process_time() - camera_time
-        cv2.imwrite(filename=camera_path, img=frame)
-        webcam.release()
-        print("opening and taking picture take", detect_elapsed_time, "seconds")
+        check, frame = camera.read()
+        if check == True:
+            cv2.imwrite(filename=camera_path, img=frame)
+        # camera.release()
+
         path = detect(camera_path, weights, view_img, save_txt, imgsz, trace, device, model, save_img)
         file_counter += 1
-        camera_path = fr'C:\Users\gorke\Desktop\QT\bitirmeProjesiArayuz\images\saved_img{file_counter}.jpg'
+        camera_path = fr'C:\Users\gorke\Desktop\QT\bitirmeProjesiArayuz\saved_img{file_counter}.jpg'
         path = "C:\\Users\\gorke\\Desktop\\YOLO\\yolov7\\" + path
         with open(path, "rb") as image:
             f = image.read()
