@@ -33,12 +33,19 @@ TODO:
 detect fonk. çalışacak, detect dosyalarını şu anlık 
 "C:\\Users\\gorke\\Desktop\\YOLO\\yolov7\\runs\\hub" klasörüne kaydediliyor. bu yol detect fonk. içinden değiştirilebilir.
 
-* txt dosyasındaki line sayısını da tcp den gönder
-https://pynative.com/python-count-number-of-lines-in-file/
+* JETSONDA ÇALIŞTIRMADAN ÖNCE YAPILACAKLAR:
+1- tüm pathler linuxa göre güncellenecek
+2- dataset.py dan w ve h kameraya göre ayarlanacak (yoksa 4k görüntü işler)
+
+##############Detection süresi hesaplama##############
+detect_time = time.process_time()
+# detect(source, weights, view_img, save_txt, imgsz, trace, device, model, save_img)
+# detect_elapsed_time = time.process_time() - detect_time
+# print("detecting single image took", detect_elapsed_time, "seconds")
 """
 def sendFile(packet, path):
     sizeOfPacket = bytearray(len(packet).to_bytes(4, byteorder='big'))
-
+    noOfApples = 0
     path = Path(path).parent.absolute()
     path = os.path.join(path, r"labels")
     for file in os.listdir(path):
@@ -59,13 +66,14 @@ def sendFile(packet, path):
 
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serverAddress = ("192.168.0.30", 1234)
+# serverAddress = ("192.168.0.30", 1234)  # yerel ağdaki laptopun server adresi, port sabit
+serverAddress = ("172.26.195.51", 1234)
 sock.connect(serverAddress)
 bufferLen = 65535
 
 ###########################################################################################################
 # source = "C:/Users/gorke/Desktop/treePhotos/k_11200804_apples-on-branch.jpg"
-source = "0"
+# source = "0"
 weights = "C:/Users/gorke/Desktop/YOLO/yolov7/runs/train/exp2/weights/best.pt"
 view_img = False
 save_txt = True
@@ -79,24 +87,23 @@ model = attempt_load(weights, map_location=device)  # load FP32 model
 model_elapsed_time = time.process_time() - model_load_time
 print("loading model took", model_elapsed_time, "seconds")
 
-detect_time = time.process_time()
-# detect(source, weights, view_img, save_txt, imgsz, trace, device, model, save_img)
-detect_elapsed_time = time.process_time() - detect_time
-print("detecting single image took", detect_elapsed_time, "seconds")
-
 file_counter = 0
-camera_path = fr'C:/Users/gorke/Desktop/saved_img{file_counter}.jpg'
+camera_path = fr'C:\Users\gorke\Desktop\QT\bitirmeProjesiArayuz\images\saved_img{file_counter}.jpg'
 while True:
     server_input = sock.recv(128)
     if server_input == b'bringMeNew':
         print("Detecting new image...")
-        webcam = cv2.VideoCapture(0)  # Number which capture webcam in my machine
+        camera_time = time.process_time()
+        webcam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         check, frame = webcam.read()
-        cv2.imwrite(filename=test_path, img=frame)
+        cv2.resize(frame, (640,480))
+        detect_elapsed_time = time.process_time() - camera_time
+        cv2.imwrite(filename=camera_path, img=frame)
         webcam.release()
-        path = detect(test_path, weights, view_img, save_txt, imgsz, trace, device, model, save_img)
+        print("opening and taking picture take", detect_elapsed_time, "seconds")
+        path = detect(camera_path, weights, view_img, save_txt, imgsz, trace, device, model, save_img)
         file_counter += 1
-        test_path = fr'C:/Users/gorke/Desktop/saved_img{file_counter}.jpg'
+        camera_path = fr'C:\Users\gorke\Desktop\QT\bitirmeProjesiArayuz\images\saved_img{file_counter}.jpg'
         path = "C:\\Users\\gorke\\Desktop\\YOLO\\yolov7\\" + path
         with open(path, "rb") as image:
             f = image.read()
