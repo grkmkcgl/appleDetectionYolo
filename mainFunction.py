@@ -68,15 +68,16 @@ def sendFile(packet, path):
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 serverAddress = ("192.168.0.30", 1234)  # yerel ağdaki laptopun server adresi, port sabit
 # serverAddress = ("172.26.195.51", 1234)
+# serverAddress = ("192.168.137.1", 1234)
 bufferLen = 65535
 
 ###########################################################################################################
 # source = "C:/Users/gorke/Desktop/treePhotos/k_11200804_apples-on-branch.jpg"
 # source = "0"
-weights = "C:/Users/gorke/Desktop/YOLO/yolov7/runs/train/exp2/weights/best.pt"
+weights = r"/home/rescience/Desktop/weights/best.pt"
 view_img = False
 save_txt = True
-imgsz = 800
+imgsz = 1200 
 trace = False
 save_img = True
 
@@ -87,30 +88,61 @@ model_elapsed_time = time.process_time() - model_load_time
 print("loading model took", model_elapsed_time, "seconds")
 
 sock.connect(serverAddress)
+print("Connected to server...")
 
-camera = cv2.VideoCapture(0, cv2.CAP_ANY)
-camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
-camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+camera = cv2.VideoCapture(2, cv2.CAP_GSTREAMER)
+#camera.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M','J','P','G'))
+#camera.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
+#camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+#check, frame = camera.read()
+print("Camera is set...")
 
-file_counter = 0
-camera_path = fr'C:\Users\gorke\Desktop\QT\bitirmeProjesiArayuz\saved_img{file_counter}.jpg'
+
+file_counter = -1
+camera_path = fr'/home/rescience/Desktop/images/saved_image{file_counter}.jpg'
+
+# detect first EMPTY image
+check, frame = camera.read()
+if check == True:
+	cv2.imwrite(filename=camera_path, img=frame)
+	detect(camera_path, weights, view_img, save_txt, imgsz, trace, device, model, save_img)
+	file_counter += 1
+	camera_path = fr'/home/rescience/Desktop/images/saved_image{file_counter}.jpg'
+	
+
+print("everything is set...")
+
+
+# endless loop
 while True:
-    server_input = sock.recv(128)
+    try:
+        server_input = sock.recv(128)
+    except:
+        print("socket error! Reconnecting...")
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect(serverAddress)
     if server_input == b'bringMeNew':
         print("Detecting new image...")
         check, frame = camera.read()
         if check == True:
             cv2.imwrite(filename=camera_path, img=frame)
-        # camera.release()
+        else:
+            print("camera did not save")
+            continue
 
         path = detect(camera_path, weights, view_img, save_txt, imgsz, trace, device, model, save_img)
         file_counter += 1
-        camera_path = fr'C:\Users\gorke\Desktop\QT\bitirmeProjesiArayuz\saved_img{file_counter}.jpg'
-        path = "C:\\Users\\gorke\\Desktop\\YOLO\\yolov7\\" + path
+        camera_path = fr'/home/rescience/Desktop/images/saved_image{file_counter}.jpg'
+        path = "/home/rescience/yolo/yolov7/" + path
         with open(path, "rb") as image:
             f = image.read()
             b = bytearray(f)
-            sendFile(b, path)
+            try:
+                sendFile(b, path)
+            except:
+                print("socket connection problem!")
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.connect(serverAddress)
     else:
         continue
 

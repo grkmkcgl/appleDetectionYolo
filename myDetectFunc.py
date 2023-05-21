@@ -88,9 +88,9 @@ def detect(source, weights, view_img, save_txt, imgsz, trace, device, model, sav
             pred = model(img, augment=False)[0]
         t2 = time_synchronized()
 
-# CONFIDENCE THRESHOLD IN LINE 93 0.8
+# CONFIDENCE THRESHOLD IN LINE 93 0.78
         # Apply NMS
-        pred = non_max_suppression(pred, 0.8, 0.45, classes=None, agnostic=False)
+        pred = non_max_suppression(pred, 0.78, 0.45, classes=None, agnostic=False)
         t3 = time_synchronized()
 
         # Apply Classifier
